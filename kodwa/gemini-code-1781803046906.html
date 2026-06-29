@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة الكروت السحرية للأطفال</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            
+            /* تم استبدال الخلفية المتدرجة بصورة الشخص */
+            background-image: url('person1.png'); /* استبدل هذا برابط صورتك */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* إضافة طبقة نصف شفافة فوق صورة الخلفية لتحسين وضوح العناصر الأخرى (اختياري) */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.3); /* عدل الشفافية واللون حسب الرغبة */
+            z-index: -1; /* تأكد من أنها خلف كل شيء */
+        }
+
+        /* النجوم المتحركة (تم إبقاؤها لإضافة لمسة سحرية فوق صورة الشخص) */
+        /* يمكنك تعديل موضعها أو حذفها إذا لم تناسب الصورة الجديدة */
+        .magic-star-1, .magic-star-2 {
+            position: absolute;
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 1; /* فوق الخلفية وتحت المحتوى */
+        }
+
+        .magic-star-1 {
+            content: "✨";
+            font-size: 2rem;
+            animation: floatStars 6s infinite ease-in-out;
+            top: 20%; left: 10%;
+        }
+        
+        .magic-star-2 {
+            content: "🌟";
+            font-size: 1.8rem;
+            animation: floatStars 8s infinite ease-in-out reverse;
+            bottom: 30%; right: 10%;
+        }
+
+        @keyframes floatStars {
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+            50% { transform: translateY(-20px) rotate(180deg) scale(1.2); }
+        }
+
+        h1 {
+            color: #db2777;
+            margin-top: 25px;
+            font-size: 2rem;
+            text-align: center;
+            padding: 0 15px;
+            text-shadow: 0px 4px 10px rgba(219, 39, 119, 0.5); /* زيادة الظل للوضوح */
+            font-weight: 900;
+            animation: pulseTitle 2s infinite ease-in-out;
+            z-index: 5; /* فوق النجوم والحقيبة */
+            position: relative;
+        }
+
+        @keyframes pulseTitle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        /* منطقة اللعب والكروت */
+        .game-container {
+            position: relative;
+            width: 100%;
+            height: 65vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 20px;
+            z-index: 5; /* فوق النجوم والحقيبة */
+        }
+
+        /* اليد الكرتونية (تم تعديل الموضع ليتناسب مع الخلفية الجديدة) */
+        .hand-image {
+            position: absolute;
+            bottom: -5px; /* رفع اليد قليلاً */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 210px; /* تكبير اليد قليلاً */
+            z-index: 10;
+            pointer-events: none; 
+            filter: drop-shadow(0px 5px 15px rgba(0,0,0,0.3)); /* زيادة الظل للعمق */
+        }
+
+        /* مروحة الكروت */
+        .cards-fan {
+            position: relative;
+            width: 140px;
+            height: 210px;
+            margin-bottom: 165px; /* تعديل الهامش السفلي ليتناسب مع اليد المرفوعة */
+            z-index: 11; /* فوق اليد */
+        }
+
+        /* الكارت الأساسي بتصميم كرتوني جذاب */
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            bottom: 0;
+            transform-origin: bottom center;
+            cursor: pointer;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), bottom 0.3s, z-index 0s;
+            perspective: 1000px;
+            z-index: 2;
+        }
+
+        /* تأثير مدهش عند حرك الأصبع فوق الكارت */
+        .card:not(.active):hover {
+            bottom: 25px;
+            filter: brightness(1.1);
+        }
+
+        /* توزيع الكروت بشكل مروحة انسيابية ومثالية للموبايل */
+        .card:nth-child(1) { transform: rotate(-30deg) translateX(-55px); }
+        .card:nth-child(2) { transform: rotate(-20deg) translateX(-35px); }
+        .card:nth-child(3) { transform: rotate(-10deg) translateX(-18px); }
+        .card:nth-child(4) { transform: rotate(0deg); }
+        .card:nth-child(5) { transform: rotate(10deg) translateX(18px); }
+        .card:nth-child(6) { transform: rotate(20deg) translateX(35px); }
+        .card:nth-child(7) { transform: rotate(30deg) translateX(55px); }
+
+        /* الكارت الداخلي */
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4); /* زيادة الظل للعمق */
+        }
+
+        /* ظهر الكارت ووجهه بتأثيرات ناعمة */
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 5px solid #fff;
+        }
+
+        /* ظهر الكارت (الذي يراه الطفل) */
+        .card-back {
+            background-color: #3b82f6; 
+            background-size: cover;
+            background-position: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        /* وجه الكارت (المفاجأة) */
+        .card-front {
+            background-color: #fff;
+            transform: rotateY(180deg);
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        /* حالة الكارت النشط - يظهر في المنتصف بشكل رائع ومضيء */
+        .card.active {
+            position: fixed;
+            top: 45%;
+            left: 50%;
+            width: 240px;   /* تكبير الكارت النشط قليلاً */
+            height: 340px;
+            transform: translate(-50%, -50%) scale(1) !important;
+            z-index: 100;
+            cursor: default;
+        }
+
+        /* إضافة إضاءة خلف الكارت النشط */
+        .card.active .card-inner {
+            transform: rotateY(180deg);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.9), 0 20px 45px rgba(0,0,0,0.5);
+        }
+
+        /* الطبقة المظلمة الخلفية */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.8); /* تعميق اللون الداكن قليلاً */
+            backdrop-filter: blur(5px); /* زيادة الضبابية قليلاً */
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s;
+            z-index: 90;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* أزرار تفاعلية تهتز ومرنة للموبايل */
+        .quiz-buttons {
+            position: fixed;
+            bottom: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 101;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+            transform: translateX(-50%) translateY(20px);
+            width: 85%;
+            justify-content: center;
+        }
+
+        .quiz-buttons.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .btn {
+            padding: 14px 20px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s, background-color 0.2s;
+            color: white;
+            flex: 1;
+            max-width: 140px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* تأثير نبض طفيف ومستمر للأزرار لتشجيع الطفل */
+        .quiz-buttons.show .btn {
+            animation: buttonPulse 1.5s infinite ease-in-out;
+        }
+        .quiz-buttons.show .btn-wrong { animation-delay: 0.2s; }
+
+        @keyframes buttonPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        .btn:active {
+            transform: scale(0.9) !important;
+        }
+
+        .btn-correct { background: linear-gradient(135deg, #4ade80, #22c55e); border-bottom: 4px solid #16a34a; }
+        .btn-correct:hover { background: #16a34a; }
+
+        .btn-wrong { background: linear-gradient(135deg, #f87171, #ef4444); border-bottom: 4px solid #dc2626; }
+        .btn-wrong:hover { background: #dc2626; }
+
+        /* نافذة رسائل التقييم الجميلة */
+        .feedback {
+            position: fixed;
+            top: 22%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 2.2rem;
+            font-weight: 900;
+            text-align: center;
+            width: 90%;
+            z-index: 102;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.95); /* زيادة عتامة الخلفية قليلاً */
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .feedback.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* الشاشات الصغيرة جداً */
+        @media (max-width: 375px) {
+            h1 { font-size: 1.6rem; }
+            .cards-fan { width: 120px; height: 180px; margin-bottom: 100px; } /* تعديل الهامش */
+            .hand-image { width: 180px; bottom: 0px; } /* تعديل الموضع والحجم */
+            .card.active { width: 200px; height: 290px; }
+            .btn { padding: 12px 15px; font-size: 1.2rem; }
+            .feedback { font-size: 1.7rem; }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="magic-star-1">✨</div>
+    <div class="magic-star-2">🌟</div>
+
+    <h1>اختر كارتًا واكتشف المفاجأة! ✨</h1>
+
+    <div class="game-container">
+        <div class="cards-fan" id="cardsFan"></div>
+        <img src="hand.png" alt="يد تمسك الكروت" class="hand-image">
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="quiz-buttons" id="quizButtons">
+        <button class="btn btn-correct" onclick="checkAnswer(true)">صحّ ✅</button>
+        <button class="btn btn-wrong" onclick="checkAnswer(false)">خطأ ❌</button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <script>
+        // ملاحظة: تأكد من وجود ملف "person_background.jpg" في نفس المجلد، أو استبدل الرابط في الـ CSS
+        const CARD_BACK_IMAGE = "card_back.png"; 
+        
+        const cardImages = [
+            "https://images1.jpg",
+            "https://images2.jpg",
+            "https://images3.jpg",
+            "https://images4.jpg",
+            "https://images5.jpg",
+            "https://images6.jpg",
+            "https://images7.jpg"
+        ];
+
+        const cardsFan = document.getElementById('cardsFan');
+        const overlay = document.getElementById('overlay');
+        const quizButtons = document.getElementById('quizButtons');
+        const feedback = document.getElementById('feedback');
+        let activeCard = null;
+
+        for (let i = 0; i < 7; i++) {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            
+            card.innerHTML = `
+                <div class="card-inner">
+                    <div class="card-front" style="background-image: url('${cardImages[i]}')"></div>
+                    <div class="card-back" style="background-image: url('${CARD_BACK_IMAGE}')"></div>
+                </div>
+            `;
+            
+            card.addEventListener('click', () => {
+                if (!activeCard && !card.classList.contains('active')) {
+                    openCard(card);
+                }
+            });
+            
+            cardsFan.appendChild(card);
+        }
+
+        function openCard(card) {
+            activeCard = card;
+            card.classList.add('active');
+            overlay.classList.add('show');
+            
+            setTimeout(() => {
+                quizButtons.classList.add('show');
+            }, 400);
+        }
+
+        function checkAnswer(isCorrect) {
+            if (isCorrect) {
+                feedback.innerText = "بطل! إجابة صحيحة 🎉⭐";
+                feedback.style.color = "#16a34a";
+            } else {
+                feedback.innerText = "حاول مرة أخرى يا ذكي! 🌟";
+                feedback.style.color = "#dc2626";
+            }
+            
+            feedback.classList.add('show');
+
+            setTimeout(() => {
+                feedback.classList.remove('show');
+                closeCard();
+            }, 2000);
+        }
+
+        function closeCard() {
+            if (activeCard) {
+                quizButtons.classList.remove('show');
+                activeCard.classList.remove('active');
+                overlay.classList.remove('show');
+                activeCard = null;
+            }
+        }
+
+        overlay.addEventListener('click', closeCard);
+    </script>
+</body>
+</html>

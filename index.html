@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خريطة الكرنفال التفاعلية 🗺️</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            user-select: none;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        /* حاوية العناوين للخدمة */
+        .header-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 12px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            margin-top: 20px;
+            border: 2px solid #fff;
+            animation: floatHeader 3s ease-in-out infinite; /* تأثير طفو لطيف للعنوان */
+        }
+
+        @keyframes floatHeader {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .header-container h2 {
+            color: #2c3e50;
+            margin: 0 0 5px 0;
+            font-size: 1.5rem;
+        }
+
+        .header-container h3 {
+            color: #ff4757;
+            margin: 0 0 5px 0;
+            font-size: 1.2rem;
+        }
+
+        .header-container .carnival-title {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 0;
+            background: #eccc68;
+            padding: 2px 15px;
+            border-radius: 10px;
+            display: inline-block;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        /* حاوية اللعبة المربعة */
+        .game-area {
+            position: relative;
+            width: 90vw;
+            height: 90vw;
+            max-width: 600px;
+            max-height: 600px;
+            background-image: url('main_home.png'); 
+            background-size: cover;
+            background-position: center;
+            border: 8px solid #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        /* تأثير الوميض والنبض المستمر حول البيوت لجذب انتباه الطفل */
+        .house-trigger {
+            position: absolute;
+            width: 65px;  
+            height: 65px;
+            cursor: pointer;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2; 
+            background-color: rgba(255, 234, 167, 0.2); /* خلفية صفراء خفيفة جداً */
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 15px #ffd700;
+            animation: pulseGlow 2s infinite ease-in-out;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                transform: translate(-50%, -50%) scale(0.95);
+                box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+                border-color: rgba(255, 215, 0, 0.6);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                box-shadow: 0 0 25px rgba(255, 215, 0, 0.9), inset 0 0 10px rgba(255, 215, 0, 0.3);
+                border-color: rgba(255, 215, 0, 1);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(0.95);
+                box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+                border-color: rgba(255, 215, 0, 0.6);
+            }
+        }
+
+        /* تأثير إضافي عند تمرير الماوس أو الضغط المطول */
+        .house-trigger:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 35px #fff, 0 0 20px #ffd700;
+            border-color: #fff;
+        }
+
+        /* النجوم السحرية الصغيرة التي ستظهر حول البيت عند الإشارة إليه */
+        .mini-star {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #fffb00;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            pointer-events: none;
+            z-index: 3;
+            animation: starPop 0.6s ease-out forwards;
+        }
+
+        @keyframes starPop {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--mx), var(--my)) scale(1) rotate(180deg); opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    
+    <div class="game-area" id="gameArea"></div>
+    
+    <div class="header-container">
+        <h2>⛪ كنيسة مارمينا الأميرية</h2>
+        <h3>👼 خدمة ملائكة</h3>
+        <p class="carnival-title">🎪 كرنفال واحد</p>
+    </div>
+    <script>
+        const housesData = [
+            { x: 20, y: 55, url: "/tnamor/index.html", name: "القول والتنمر" }, 
+            { x: 58, y: 38, url: "/ataa/index.html", name: "العطاء" },         
+            { x: 78, y: 72, url: "/kodwa/index.html", name: "القدوة" }      
+        ];
+
+        const gameArea = document.getElementById('gameArea');
+
+        function initMap() {
+            housesData.forEach((house) => {
+                const trigger = document.createElement('div');
+                trigger.className = 'house-trigger';
+                trigger.style.left = house.x + '%';
+                trigger.style.top = house.y + '%';
+                trigger.title = house.name;
+
+                // تأثير بصرى: إطلاق نجوم سحرية صغيرة عند مرور الماوس أو اللمس
+                trigger.addEventListener('mousemove', function(e) {
+                    createMagicStar(house.x, house.y);
+                });
+                
+                trigger.addEventListener('touchmove', function(e) {
+                    createMagicStar(house.x, house.y);
+                });
+
+                // الانتقال عند الضغط
+                trigger.addEventListener('click', function(e) {
+                    e.stopPropagation(); 
+                    if (house.url) {
+                        // إضافة تأثير اختفاء سريع قبل الانتقال
+                        trigger.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                        trigger.style.opacity = '0';
+                        setTimeout(() => {
+                            window.location.href = house.url;
+                        }, 200);
+                    }
+                });
+
+                gameArea.appendChild(trigger);
+            });
+        }
+
+        // دالة مخصصة لإنشاء النجوم المتطايرة حول البيوت بشكل عشوائي وممتع للأطفال
+        function createMagicStar(baseX, baseY) {
+            // نحدد نسبة حدوث التأثير حتى لا تزدحم الشاشة بالنجوم
+            if (Math.random() > 0.15) return; 
+
+            const star = document.createElement('div');
+            star.className = 'mini-star';
+            
+            // نضع النجمة في مكان البيت تقريباً
+            star.style.left = baseX + '%';
+            star.style.top = baseY + '%';
+
+            // حساب اتجاه عشوائي لتتطاير النجمة إليه (X و Y عشوائيين)
+            const moveX = (Math.random() - 0.5) * 60 + 'px';
+            const moveY = (Math.random() - 0.5) * 60 + 'px';
+            
+            star.style.setProperty('--mx', moveX);
+            star.style.setProperty('--my', moveY);
+
+            gameArea.appendChild(star);
+
+            // حذف النجمة فور انتهاء الحركة
+            setTimeout(() => {
+                star.remove();
+            }, 600);
+        }
+
+        initMap();
+    </script>
+</body>
+</html>
